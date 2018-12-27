@@ -1,0 +1,57 @@
+#!/bin/bash                                                                      
+
+
+## Getting the name of the previous Branch
+function getPreviousBranch(){
+local  myresult="$(git rev-parse --abbrev-ref @{-1})";
+echo "$myresult";
+}
+
+## This function is a bit of a hack
+## What it dose is going over the log file provided by zshell
+## and getting the last line of that log
+## and then assigin it to the lastLineOfLog variable
+getLastLog(){
+  local lastLineOfLog="$( tail -n 1 /home/ec2-user/.zsh_history  )";
+  echo "$lastLineOfLog";
+}
+
+## getting the name of the previous branch from the function
+result=$(getPreviousBranch)  
+## the variable below, is acting like a query like variable, 
+## its whats the script search for in the last line of the log
+## if its finding checkout master that means the last commad ran by the server
+## is related to checking out the master, and so it will not enter the loop
+searchFor="checkout master"
+
+## getting the last line of the log from the function
+lastLineOfLog=$(getLastLog);
+if [ "$result" != "master" ] && [ "$BRANCH" != "master" ]; then
+  ## if the current branch name is not master  AND the previous branch name is
+  ##not master
+if [[ $lastLineOfLog == *$searchFor* ]]; then
+  ## double checking for cases of coming back from branchs whos not master
+  ## this time checking the log for the string above
+  clear;
+  exit;
+ fi
+  echo -e '\e[33m-------------------------------------------------';
+  echo '        Warning: please switch to master!        ';
+  echo -e '\e[33m-------------------------------------------------';
+  echo -e '\e[33m-------------------------------------------------';
+  echo -e '\e[33m-------------------------------------------------';
+  echo -e '\e[34m--------Before Checkout to new branch,-----------';
+  echo -e '\e[34m------------please switch to Master-------------';
+  echo -e '\e[33m-------------------------------------------------';
+  echo -e '\e[33m-------------------------------------------------';
+  echo -e '\e[33m-------------------------------------------------';
+  echo -e '\e[33m-------------------------------------------------';
+  echo -e '\e[34m-------Did you finsh the task ? Good job!--------';
+  echo -e '\e[33m-------------------------------------------------';
+  echo -e '\e[33m-------------------------------------------------';
+  exit 1;
+fi
+
+## Created by so called "Kick ass developer" - Yuval Gal
+## Naruto is love, naruto is life.
+
